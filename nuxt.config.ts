@@ -17,7 +17,11 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxtjs/google-fonts',
     '@nuxt/image',
+    '@pinia/nuxt',
+    'nuxt-headlessui',
   ],
+
+
 
   googleFonts: {
     families: {

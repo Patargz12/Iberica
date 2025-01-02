@@ -1,3 +1,8 @@
+<script setup>
+provideHeadlessUseId(() => useId());
+</script>
+
+
 <template>
   <div>
     <NuxtRouteAnnouncer />

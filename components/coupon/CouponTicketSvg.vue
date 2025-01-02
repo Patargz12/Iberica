@@ -1,14 +1,15 @@
-<template>
+`<template>
   <svg
-    width="342"
+    :width="width"
     height="101"
-    viewBox="0 0 342 101"
+    :viewBox="`0 0 ${width} 101`"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     class="w-full"
+    preserveAspectRatio="none"
   >
-    <g clip-path="url(#clip0_8717_5908)">
-      <g clip-path="url(#clip1_8717_5908)">
+    <g>
+      <g>
         <path
           fill-rule="evenodd"
           clip-rule="evenodd"
@@ -16,17 +17,29 @@
           :fill="color"
         />
       </g>
-      <rect width="41" height="101" transform="translate(6)" :fill="color" />
+      <rect width="91" height="101" transform="translate(6)" :fill="color" />
       <path
-        d="M47 0H330C336.627 0 342 5.37258 342 12V89C342 95.6274 336.627 101 330 101H47V0Z"
+        :d="`M47 0H${width - 12}C${
+          width - 5.373
+        } 0 ${width} 5.37258 ${width} 12V89C${width} 95.6274 ${
+          width - 5.373
+        } 101 ${width - 12} 101H47V0Z`"
         :fill="color"
       />
       <path
-        d="M53 7H330C333.314 7 336 9.68629 336 13V88C336 91.3137 333.314 94 330 94H53V7Z"
+        :d="`M53 7H${width - 12}C${width - 8.686} 7 ${width - 6} 9.68629 ${
+          width - 6
+        } 13V88C${width - 6} 91.3137 ${width - 8.686} 94 ${
+          width - 12
+        } 94H53V7Z`"
         fill="white"
       />
       <path
-        d="M53 7H330C333.314 7 336 9.68629 336 13V88C336 91.3137 333.314 94 330 94H53V7Z"
+        :d="`M53 7H${width - 12}C${width - 8.686} 7 ${width - 6} 9.68629 ${
+          width - 6
+        } 13V88C${width - 6} 91.3137 ${width - 8.686} 94 ${
+          width - 12
+        } 94H53V7Z`"
         :fill="color"
         fill-opacity="0.16"
       />
@@ -40,16 +53,6 @@
         stroke-width="6"
       />
     </g>
-    <defs>
-      <clipPath id="clip0_8717_5908">
-        <rect width="342" height="101" fill="white" />
-        ss
-      </clipPath>
-      ss
-      <clipPath id="clip1_8717_5908">
-        <rect width="6" height="101" fill="white" />
-      </clipPath>
-    </defs>
   </svg>
 </template>
 
@@ -59,5 +62,9 @@ defineProps({
     type: String,
     required: true,
   },
+  width: {
+    type: Number,
+    default: 342,
+  },
 });
-</script>
+</script>`

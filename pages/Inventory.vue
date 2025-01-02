@@ -30,83 +30,106 @@
           <h1 class="text-h2 font-bold">Inventory</h1>
         </div>
       </div>
-      <div class="flex justify-end mb-8">
-        <InventoryToggle v-model="activeView" />
+
+      <!-- Loading State -->
+      <div v-if="isLoading" class="flex justify-center items-center h-64">
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"
+        ></div>
       </div>
 
-      <div class="bg-white p-6" v-if="activeView === 'botika'">
-        <InventorySection
-          title="Out of Stock"
-          :count="outOfStock.length"
-          type="out"
-        >
-          <InventoryItem
-            v-for="(item, index) in outOfStock"
-            :key="item.id"
-            v-bind="item"
-            :alternate="index % 2 === 1"
-          />
-        </InventorySection>
-
-        <InventorySection title="Low Stock" :count="lowStock.length" type="low">
-          <InventoryItem
-            v-for="(item, index) in lowStock"
-            :key="item.id"
-            v-bind="item"
-            :alternate="index % 2 === 1"
-          />
-        </InventorySection>
-
-        <InventorySection title="In Stock" :count="inStock.length" type="in">
-          <InventoryItem
-            v-for="(item, index) in inStock"
-            :key="item.id"
-            v-bind="item"
-            :alternate="index % 2 === 1"
-          />
-        </InventorySection>
+      <!-- Error State -->
+      <div v-else-if="hasError" class="bg-red-50 p-4 rounded-lg">
+        <p class="text-red-700">
+          An error occurred while loading inventory data. Please try again
+          later.
+        </p>
       </div>
 
-      <div v-else class="bg-white p-6">
-        <InventorySection
-          title="Out of Stock"
-          :count="outOfStockFreebies.length"
-          type="out"
-        >
-          <InventoryItem
-            v-for="(item, index) in outOfStockFreebies"
-            :key="item.id"
-            v-bind="item"
-            :alternate="index % 2 === 1"
-          />
-        </InventorySection>
+      <!-- Content -->
+      <template v-else>
+        <div class="flex justify-end mb-8">
+          <InventoryToggle v-model="activeView" />
+        </div>
 
-        <InventorySection
-          title="Low Stock"
-          :count="lowStockFreebies.length"
-          type="low"
-        >
-          <InventoryItem
-            v-for="(item, index) in lowStockFreebies"
-            :key="item.id"
-            v-bind="item"
-            :alternate="index % 2 === 1"
-          />
-        </InventorySection>
+        <div class="bg-white p-6" v-if="activeView === 'botika'">
+          <InventorySection
+            title="Out of Stock"
+            :count="outOfStock.length"
+            type="out"
+          >
+            <InventoryItem
+              v-for="(item, index) in outOfStock"
+              :key="item.id"
+              v-bind="item"
+              :alternate="index % 2 === 1"
+            />
+          </InventorySection>
 
-        <InventorySection
-          title="In Stock"
-          :count="inStockFreebies.length"
-          type="in"
-        >
-          <InventoryItem
-            v-for="(item, index) in inStockFreebies"
-            :key="item.id"
-            v-bind="item"
-            :alternate="index % 2 === 1"
-          />
-        </InventorySection>
-      </div>
+          <InventorySection
+            title="Low Stock"
+            :count="lowStock.length"
+            type="low"
+          >
+            <InventoryItem
+              v-for="(item, index) in lowStock"
+              :key="item.id"
+              v-bind="item"
+              :alternate="index % 2 === 1"
+            />
+          </InventorySection>
+
+          <InventorySection title="In Stock" :count="inStock.length" type="in">
+            <InventoryItem
+              v-for="(item, index) in inStock"
+              :key="item.id"
+              v-bind="item"
+              :alternate="index % 2 === 1"
+            />
+          </InventorySection>
+        </div>
+
+        <div v-else class="bg-white p-6">
+          <InventorySection
+            title="Out of Stock"
+            :count="outOfStockFreebies.length"
+            type="out"
+          >
+            <InventoryItem
+              v-for="(item, index) in outOfStockFreebies"
+              :key="item.id"
+              v-bind="item"
+              :alternate="index % 2 === 1"
+            />
+          </InventorySection>
+
+          <InventorySection
+            title="Low Stock"
+            :count="lowStockFreebies.length"
+            type="low"
+          >
+            <InventoryItem
+              v-for="(item, index) in lowStockFreebies"
+              :key="item.id"
+              v-bind="item"
+              :alternate="index % 2 === 1"
+            />
+          </InventorySection>
+
+          <InventorySection
+            title="In Stock"
+            :count="inStockFreebies.length"
+            type="in"
+          >
+            <InventoryItem
+              v-for="(item, index) in inStockFreebies"
+              :key="item.id"
+              v-bind="item"
+              :alternate="index % 2 === 1"
+            />
+          </InventorySection>
+        </div>
+      </template>
     </main>
   </div>
 </template>
@@ -115,27 +138,34 @@
 import DashboardHeader from "~/components/dashboard/DashboardHeader.vue";
 import InventoryItem from "~/components/inventory/InventoryItem.vue";
 import InventorySection from "~/components/inventory/InventorySection.vue";
-const { botikaItems, freebieItems } = useInventoryData();
+
+const { botikaItems, freebieItems, isLoading, hasError } = useInventoryData();
 const activeView = ref("botika");
 
 // Botika computed properties
-const outOfStock = computed(() =>
-  botikaItems.filter((item) => item.stock === 0)
+const outOfStock = computed(
+  () => botikaItems.value?.filter((item) => item.stock === 0) ?? []
 );
-const lowStock = computed(() =>
-  botikaItems.filter((item) => item.stock > 0 && item.stock <= 30)
+const lowStock = computed(
+  () =>
+    botikaItems.value?.filter((item) => item.stock > 0 && item.stock <= 30) ??
+    []
 );
-const inStock = computed(() => botikaItems.filter((item) => item.stock > 30));
+const inStock = computed(
+  () => botikaItems.value?.filter((item) => item.stock > 30) ?? []
+);
 
 // Freebies computed properties
-const outOfStockFreebies = computed(() =>
-  freebieItems.filter((item) => item.stock === 0)
+const outOfStockFreebies = computed(
+  () => freebieItems.value?.filter((item) => item.stock === 0) ?? []
 );
-const lowStockFreebies = computed(() =>
-  freebieItems.filter((item) => item.stock > 0 && item.stock <= 30)
+const lowStockFreebies = computed(
+  () =>
+    freebieItems.value?.filter((item) => item.stock > 0 && item.stock <= 30) ??
+    []
 );
-const inStockFreebies = computed(() =>
-  freebieItems.filter((item) => item.stock > 30)
+const inStockFreebies = computed(
+  () => freebieItems.value?.filter((item) => item.stock > 30) ?? []
 );
 </script>
 
@@ -150,7 +180,3 @@ const inStockFreebies = computed(() =>
   );
 }
 </style>
-
-
-
-

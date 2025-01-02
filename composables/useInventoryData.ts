@@ -1,68 +1,22 @@
-export const useInventoryData = () => {
-    const botikaItems = [
-        {
-            id: 1,
-            name: 'Losartan Potassium Amlodipine Besilate',
-            code: 'LPAB',
-            quantity: 200,
-            price: 300000,
-            stock: 0
-        },
-        {
-            id: 2,
-            name: 'Losartan Potassium Amlodipine Besilate',
-            code: 'LPAB',
-            quantity: 200,
-            price: 300000,
-            stock: 0
-        },
-        {
-            id: 3,
-            name: 'Losartan Potassium Amlodipine Besilate',
-            code: 'LPAB',
-            quantity: 200,
-            price: 300000,
-            stock: 30
-        },
-        {
-            id: 4,
-            name: 'Losartan Potassium Amlodipine Besilate',
-            code: 'LPAB',
-            quantity: 200,
-            price: 300000,
-            stock: 90
-        }
-    ]
+import type { BotikaItem, FreebieItem } from '~/types/inventory'
 
-    const freebieItems = [
-        {
-            id: 1,
-            name: 'Sample Medicine Pack',
-            code: 'SMP',
-            quantity: 50,
-            price: 0,
-            stock: 0
-        },
-        {
-            id: 2,
-            name: 'Promotional Items',
-            code: 'PROMO',
-            quantity: 100,
-            price: 0,
-            stock: 30
-        },
-        {
-            id: 3,
-            name: 'Medical Supplies',
-            code: 'MED',
-            quantity: 150,
-            price: 0,
-            stock: 90
-        }
-    ]
+export const useInventoryData = () => {
+    const { data: botikaData, pending: botikaPending, error: botikaError } =
+        useFetch<{ items: BotikaItem[] }>('/api/inventory/botika')
+
+    const { data: freebiesData, pending: freebiesPending, error: freebiesError } =
+        useFetch<{ items: FreebieItem[] }>('/api/inventory/freebies')
+
+    const botikaItems = computed(() => botikaData.value?.items ?? [])
+    const freebieItems = computed(() => freebiesData.value?.items ?? [])
+
+    const isLoading = computed(() => botikaPending.value || freebiesPending.value)
+    const hasError = computed(() => botikaError.value || freebiesError.value)
 
     return {
         botikaItems,
-        freebieItems
+        freebieItems,
+        isLoading,
+        hasError
     }
 }

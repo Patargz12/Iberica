@@ -1,9 +1,8 @@
-<template>
+`<template>
   <div class="bg-gradient min-h-screen">
     <DashboardHeader />
     <div class="p-4">
       <!-- Header -->
-
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center space-x-2">
           <NuxtLink to="/Dashboard" class="p-2 flex items-center space-x-4">
@@ -12,17 +11,29 @@
           </NuxtLink>
         </div>
         <div class="flex items-center space-x-2 mr-6">
-          <button class="p-2 rounded-lg bg-gray-100">
+          <button class="p-3 rounded-lg bg-gray-50 shadow-md">
             <Icon name="heroicons:arrows-up-down" class="w-6 h-6" />
           </button>
-          <button class="p-2 rounded-lg bg-gray-100">
+          <button class="p-3 rounded-lg bg-gray-50 shadow-md">
             <Icon name="heroicons:funnel" class="w-6 h-6" />
           </button>
         </div>
       </div>
 
+      <!-- Loading State -->
+      <div v-if="pending" class="text-center mt-10">
+        <span class="text-lg font-medium">Loading Coupons...</span>
+      </div>
+
+      <!-- Error State -->
+      <div v-if="error" class="text-center mt-10 text-red-600">
+        <span class="text-lg font-medium"
+          >Failed to load coupons: {{ error.message }}</span
+        >
+      </div>
+
       <!-- Active Coupons -->
-      <section class="mb-6 px-8">
+      <section v-if="!pending && !error" class="mb-6 px-8">
         <h2 class="text-h3 font-semibold mb-6">Active</h2>
         <div class="grid grid-cols-3 gap-3">
           <CouponTicket
@@ -35,7 +46,7 @@
       </section>
 
       <!-- Expired Coupons -->
-      <section class="px-8">
+      <section v-if="!pending && !error" class="px-8">
         <h2 class="text-h3 font-semibold mb-6">Expired</h2>
         <div class="grid grid-cols-3 gap-3">
           <CouponTicket
@@ -47,87 +58,31 @@
           />
         </div>
       </section>
+
+      <!-- Coupon Details Modal -->
+      <CouponDetailsModal
+        v-if="selectedCoupon"
+        v-model="isModalOpen"
+        :coupon="selectedCoupon"
+      />
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import DashboardHeader from "~/components/dashboard/DashboardHeader.vue";
+import CouponDetailsModalModal from "~/components/coupon/CouponDetailsModal.vue";
 
-const activeCoupons = ref([
-  {
-    id: 1,
-    title: "Iberica 20% off!",
-    code: "IVP20OFF",
-    validity: "Anytime",
-    color: "#E2325C",
-  },
-  {
-    id: 2,
-    title: "Iberica 20% off!",
-    code: "IVP20OFF",
-    validity: "Anytime",
-    color: "#22C55E",
-  },
-  {
-    id: 3,
-    title: "Iberica 20% off!",
-    code: "IVP20OFF",
-    validity: "Anytime",
-    color: "#6366F1",
-  },
-  {
-    id: 4,
-    title: "Iberica 20% off!",
-    code: "IVP20OFF",
-    validity: "Anytime",
-    color: "#F59E0B",
-  },
-  {
-    id: 5,
-    title: "Iberica 20% off!",
-    code: "IVP20OFF",
-    validity: "Anytime",
-    color: "#06B6D4",
-  },
-  {
-    id: 6,
-    title: "Iberica 20% off!",
-    code: "IVP20OFF",
-    validity: "Anytime",
-    color: "#3B82F6",
-  },
-]);
-
-const expiredCoupons = ref([
-  {
-    id: 7,
-    title: "Iberica 20% off!",
-    code: "IVP20OFF",
-    validity: "Anytime",
-    color: "#71717a",
-  },
-  {
-    id: 8,
-    title: "Iberica 20% off!",
-    code: "IVP20OFF",
-    validity: "Anytime",
-    color: "#71717a",
-  },
-  {
-    id: 9,
-    title: "Iberica 20% off!",
-    code: "IVP20OFF",
-    validity: "Anytime",
-    color: "#71717a",
-  },
-]);
-
-const showCouponDetails = (coupon) => {
-  console.log("Show details for coupon:", coupon);
-};
+const {
+  activeCoupons,
+  expiredCoupons,
+  pending,
+  error,
+  selectedCoupon,
+  isModalOpen,
+  showCouponDetails,
+} = useCoupons();
 </script>
-
 
 <style scoped>
 .bg-gradient {
@@ -139,4 +94,4 @@ const showCouponDetails = (coupon) => {
     #fffcd0 100%
   );
 }
-</style>
+</style>`
